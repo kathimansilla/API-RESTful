@@ -5,11 +5,10 @@
 
 // Imports
 
-const express = require("express");
-const cors = require("cors");
-const mysql = require("mysql2/promise");
-require('dotenv').config()
-
+const express = require('express');
+const cors = require('cors');
+const mysql = require('mysql2/promise');
+require('dotenv').config();
 
 // Arracar el servidor
 
@@ -18,19 +17,17 @@ const server = express();
 // Configuración del servidor
 
 server.use(cors());
-server.use(express.json({limit: "25mb"}));
+server.use(express.json({ limit: '25mb' }));
 
 // Conexion a la base de datos
 
 async function getConnection() {
-  const connection = await mysql.createConnection(
-    {
-      host: process.env.DB_HOST || "localhost",
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASS,  // <-- Pon aquí tu contraseña o en el fichero /.env en la carpeta raíz
-      database: process.env.DB_NAME || "recetas_db",
-    }
-  );
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASS, // <-- Pon aquí tu contraseña o en el fichero /.env en la carpeta raíz
+    database: process.env.DB_NAME || 'recetas_db',
+  });
 
   connection.connect();
 
@@ -49,71 +46,91 @@ server.listen(port, () => {
 //GET obtener todas las recetas
 
 server.get('/recetas', async (req, res) => {
-  const select = 'SELECT * FROM recetas';
-  const conn = await getConnection();
-  const [result] = await conn.query(select);
-  conn.end();
-  res.json({
-    info: {
+  try {
+    const select = 'SELECT * FROM recetas';
+    const conn = await getConnection();
+    const [result] = await conn.query(select);
+    conn.end();
+    res.json({
+      info: {
         count: result.length,
-    },
-    results: result,
-});
+      },
+      results: result,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: `Ha ocurrido el siguiente error: ${error.message}`,
+    });
+  }
 });
 
 //GET obtener una receta por su id
 server.get('/recetas/:id', async (req, res) => {
   const idReceta = req.params.id;
-  console.log(idReceta);
-  const select = 'SELECT * FROM recetas WHERE id = ?';
-  const conn = await getConnection();
-  const [result] = await conn.query(select, idReceta);
-  conn.end();
-  res.json({
-    results: result,
-});
+  try {
+    const select = 'SELECT * FROM recetas WHERE id = ?';
+    const conn = await getConnection();
+    const [result] = await conn.query(select, idReceta);
+    conn.end();
+    res.json({
+      results: result,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: `Ha ocurrido el siguiente error: ${error.message}`,
+    });
+  };
 });
 
 // POST crear una nueva receta
-// voy a recibir información por 2 parámetros: por el url params (user) y por el body toda la info de un registro
 server.post('/recetas', async (req, res) => {
-  const {nombre, ingredientes, instrucciones} = req.body;
+  const { nombre, ingredientes, instrucciones } = req.body;
   try {
-    const insert = 'INSERT INTO recetas (nombre, ingredientes, instrucciones) VALUES (?, ?, ?)';
+    const insert =
+      'INSERT INTO recetas (nombre, ingredientes, instrucciones) VALUES (?, ?, ?)';
     const conn = await getConnection();
     const [result] = await conn.query(insert, [
-      nombre, ingredientes, instrucciones]);
+      nombre,
+      ingredientes,
+      instrucciones,
+    ]);
     conn.end();
-    res.json(
-      {
-        success: true,
-        id: result.insertId
+    res.json({
+      success: true,
+      id: result.insertId,
     });
   } catch (error) {
-    res.json(
-      {
-        success: false,
-        message: `Ha ocurrido el siguiente error: ${error.message}` 
+    res.json({
+      success: false,
+      message: `Ha ocurrido el siguiente error: ${error.message}`,
     });
-  };
+  }
 });
 
 // PUT actualizar una receta existente
 server.put('/recetas/:id', async (req, res) => {
   const idReceta = req.params.id;
-  const {nombre, ingredientes, instrucciones} = req.body;
+  const { nombre, ingredientes, instrucciones } = req.body;
   try {
-    const update = 'UPDATE recetas SET nombre = ?, ingredientes = ?, instrucciones = ? WHERE id = ?';
+    const update =
+      'UPDATE recetas SET nombre = ?, ingredientes = ?, instrucciones = ? WHERE id = ?';
     const conn = await getConnection();
-    const [result] = await conn.query(update, [nombre, ingredientes, instrucciones, idReceta]);
+    const [result] = await conn.query(update, [
+      nombre,
+      ingredientes,
+      instrucciones,
+      idReceta,
+    ]);
     conn.end();
     res.json({
-      success: true
+      success: true,
     });
   } catch (error) {
     res.json({
       success: false,
-      message: `Ha ocurrido el siguiente error: ${error.message}` 
+      message: `Ha ocurrido el siguiente error: ${error.message}`,
     });
   }
 });
@@ -132,7 +149,7 @@ server.delete('/recetas/:id', async (req, res) => {
   } catch (error) {
     res.json({
       success: false,
-      message: `Ha ocurrido el siguiente error: ${error.message}`
+      message: `Ha ocurrido el siguiente error: ${error.message}`,
     });
   }
 });
