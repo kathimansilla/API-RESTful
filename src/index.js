@@ -150,6 +150,42 @@ server.put('/recetas/:id', async (req, res) => {
   const idReceta = req.params.id;
   const { nombre, ingredientes, instrucciones } = req.body;
   try {
+    if (!nombre || !ingredientes || !instrucciones) {
+      if (
+        !nombre &&
+        ingredientes &&
+        instrucciones
+      ) {
+        return res.json({
+          success: false,
+          message: 'Ha olvidado introducir el nuevo nombre de su receta',
+        });
+      } else if (
+        !ingredientes &&
+        nombre &&
+        instrucciones
+      ) {
+        return res.json({
+          success: false,
+          message: 'Ha olvidado introducir los nuevos ingredientes de su receta',
+        });
+      } else if (
+        !instrucciones &&
+        nombre &&
+        ingredientes
+      ) {
+        return res.json({
+          success: false,
+          message: 'Ha olvidado introducir las nuevas instrucciones de su receta',
+        });
+      } else {
+        return res.json({
+          success: false,
+          message:
+            '¡Ha olvidado introducir varias partes de su receta! Compruebe: nombre, ingredientes e instrucciones',
+        });
+      }
+    }
     const update =
       'UPDATE recetas SET nombre = ?, ingredientes = ?, instrucciones = ? WHERE id = ?';
     const conn = await getConnection();
