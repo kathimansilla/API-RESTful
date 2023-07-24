@@ -89,29 +89,17 @@ server.post('/recetas', async (req, res) => {
   const { nombre, ingredientes, instrucciones } = req.body;
   try {
     if (!nombre || !ingredientes || !instrucciones) {
-      if (
-        !nombre &&
-        ingredientes &&
-        instrucciones
-      ) {
+      if (!nombre && ingredientes && instrucciones) {
         return res.json({
           success: false,
           message: 'Ha olvidado introducir el nombre de su receta',
         });
-      } else if (
-        !ingredientes &&
-        nombre &&
-        instrucciones
-      ) {
+      } else if (!ingredientes && nombre && instrucciones) {
         return res.json({
           success: false,
           message: 'Ha olvidado introducir los ingredientes de su receta',
         });
-      } else if (
-        !instrucciones &&
-        nombre &&
-        ingredientes
-      ) {
+      } else if (!instrucciones && nombre && ingredientes) {
         return res.json({
           success: false,
           message: 'Ha olvidado introducir las instrucciones de su receta',
@@ -151,32 +139,22 @@ server.put('/recetas/:id', async (req, res) => {
   const { nombre, ingredientes, instrucciones } = req.body;
   try {
     if (!nombre || !ingredientes || !instrucciones) {
-      if (
-        !nombre &&
-        ingredientes &&
-        instrucciones
-      ) {
+      if (!nombre && ingredientes && instrucciones) {
         return res.json({
           success: false,
           message: 'Ha olvidado introducir el nuevo nombre de su receta',
         });
-      } else if (
-        !ingredientes &&
-        nombre &&
-        instrucciones
-      ) {
+      } else if (!ingredientes && nombre && instrucciones) {
         return res.json({
           success: false,
-          message: 'Ha olvidado introducir los nuevos ingredientes de su receta',
+          message:
+            'Ha olvidado introducir los nuevos ingredientes de su receta',
         });
-      } else if (
-        !instrucciones &&
-        nombre &&
-        ingredientes
-      ) {
+      } else if (!instrucciones && nombre && ingredientes) {
         return res.json({
           success: false,
-          message: 'Ha olvidado introducir las nuevas instrucciones de su receta',
+          message:
+            'Ha olvidado introducir las nuevas instrucciones de su receta',
         });
       } else {
         return res.json({
@@ -210,7 +188,16 @@ server.put('/recetas/:id', async (req, res) => {
 // DELETE eliminar una receta
 server.delete('/recetas/:id', async (req, res) => {
   const idReceta = req.params.id;
+  const select = 'SELECT * FROM recetas WHERE id = ?';
+  const conn = await getConnection();
+  const [recetaSeleccionada] = await conn.query(select, idReceta);
   try {
+    if (recetaSeleccionada.length === 0) {
+      return res.json({
+        success: false,
+        message: 'Receta no encontrada',
+      });
+    }
     const deleteSql = 'DELETE FROM recetas WHERE id = ?';
     const conn = await getConnection();
     const [result] = await conn.query(deleteSql, idReceta);
