@@ -16,7 +16,7 @@ what happened is displayed.
 - Postman
 - GitHub
 
-This exam has been supervised by:
+This exam has been supervised and evaluated by:
 
 - **Iván Garrido** @igarrido-adalab
 - **Dayana Romero** @dayanare
