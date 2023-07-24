@@ -1,0 +1,12 @@
+CREATE DATABASE recetas_db;
+USE recetas_db;
+
+CREATE TABLE recetas (
+	id INT auto_increment PRIMARY KEY,
+    nombre VARCHAR(40),
+    ingredientes VARCHAR(500),
+    instrucciones TEXT
+);
+
+INSERT INTO `recetas_db`.`recetas` (`nombre`, `ingredientes`, `instrucciones`) 
+VALUES ('Tortilla de papas', 'Papas, huevos, cebollza, ajo, sal, pimienta', 'Corte las papas corte las papas  corte las papas  corte las papas');
