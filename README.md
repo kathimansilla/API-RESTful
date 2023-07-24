@@ -1,6 +1,5 @@
 # FINAL EXAM MODULE 4: API RESTful | ADALAB 
-## 👩🏻‍💻 Student: 
--**Kathi Mansilla** @kathimansilla 
+## 👩🏻‍💻 Student: **Kathi Mansilla** @kathimansilla 
 
 This is a RESTful API for getting, inserting, updating, and deleting data from a SQL database. 
 Specifically, it has been designed to work with a recipes database, where each entry includes 
